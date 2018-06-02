@@ -58,9 +58,81 @@ public class TicTacToe extends JFrame {
 			}
 		});
 	}
+
+	protected void end(Player player) {
+		List<JButton[]> jbl = Arrays.asList(playfield);
+		for (JButton[] jba : jbl) {
+			List<JButton> jbil = Arrays.asList(jba);
+			for (JButton jbtn : jbil) {
+				jbtn.setEnabled(false);
+			}
+		}
+		switch (player) {
+		case Human:
+			consolePanel.setText(consolePanel.getText() + "\n\nDu hast gewonnen!");
+			break;
+		case Com:
+			consolePanel.setText(consolePanel.getText() + "\n\nComputer hat gewonnen!");
+			break;
+		default:
+			break;
+		}
+	}
+
+	protected boolean checkWin(JButton jbclicked) {
+		if (checkHorizontal(jbclicked) || checkVertical(jbclicked) || checkDiagonal(jbclicked))
+			return true;
+		else
+			return false;
+	}
 	
+	protected boolean checkDiagonal(JButton jbclicked) {
+		if(getJButtonByCoordinates(new int[] {1,1}).getText()!="") {
+			int[][] cross = new int[][] {
+				{0,0},	{2,0},
+					{1,1},
+				{0,2},	{2,2}
+			};
+			for(int[] cell : cross) {
+				if(Arrays.equals(getJButtonArrangement(jbclicked), cell)) {
+					String[] txtVal = new String[5];
+					for(int i = 0; i<5; i++) {
+						txtVal[i] = getJButtonByCoordinates(cross[i]).getText();
+					}
+					if(txtVal[0]==txtVal[2] && txtVal[2]==txtVal[4]) {
+						return true;
+					} else if(txtVal[1]==txtVal[2] && txtVal[2]==txtVal[4]) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	protected boolean checkHorizontal(JButton jbclicked) {
+		JButton[] row = Arrays.asList(playfield).get(getJButtonArrangement(jbclicked)[1]);
+		if (row[0].getText().equals(row[1].getText()) && row[2].getText().equals(row[1].getText())) {
+			return true;
+		} else
+			return false;
+	}
+
+	protected boolean checkVertical(JButton jbclicked) {
+		int column = getJButtonArrangement(jbclicked)[0];
+		List<JButton[]> rows = Arrays.asList(playfield);
+		if (rows.get(0)[column].getText().equals(rows.get(1)[column].getText()) && rows.get(2)[column].getText().equals(rows.get(1)[column].getText())) {
+			System.out.println("vertical!");
+			return true;
+		} else
+			System.out.println("oh no");
+			return false;
+	}
+
 	protected void afterTurn(JButton jbclicked, Player player) {
-		if(getEnabledJButtons().size()!=0) {
+		if (checkWin(jbclicked))
+			end(player);
+		else if (getEnabledJButtons().size() != 0) {
 			switch (player) {
 			case Human:
 				comTurn();
@@ -73,34 +145,35 @@ public class TicTacToe extends JFrame {
 			}
 		}
 	}
-	
-	protected List<JButton> getEnabledJButtons(){
+
+	protected List<JButton> getEnabledJButtons() {
 		List<JButton> available = new ArrayList<>();
 		List<JButton[]> jbl = Arrays.asList(playfield);
 		for (JButton[] jba : jbl) {
 			List<JButton> jbil = Arrays.asList(jba);
 			for (JButton jbtn : jbil) {
-				if(jbtn.isEnabled()) {
+				if (jbtn.isEnabled()) {
 					available.add(jbtn);
 				}
 			}
 		}
 		return available;
 	}
-	
+
 	protected void comTurn() {
 		List<JButton> availableCells = getEnabledJButtons();
 		JButton chosenOne = availableCells.get(new Random().nextInt(availableCells.size()));
 		onTurn(chosenOne, Player.Com);
 	}
-	
+
 	protected JButton getJButtonByCoordinates(int[] cell) {
 		List<JButton[]> jbl = Arrays.asList(playfield);
 		List<JButton> jbil = Arrays.asList(jbl.get(cell[1]));
-		System.out.println("JButton at X:"+cell[0]+", Y:"+cell[1]+" is enabled? -> "+jbil.get(cell[0]).isEnabled());
+		System.out.println(
+				"JButton at X:" + cell[0] + ", Y:" + cell[1] + " is enabled? -> " + jbil.get(cell[0]).isEnabled());
 		return jbil.get(cell[0]);
 	}
-	
+
 	protected int[] getJButtonArrangement(JButton jb) {
 		int[] cell = new int[2];
 		List<JButton[]> jbl = Arrays.asList(playfield);
@@ -123,7 +196,6 @@ public class TicTacToe extends JFrame {
 		consolePanel.setText(
 				consolePanel.getText() + "\nField (" + cell[0] + ", " + cell[1] + ") set by " + player.toString());
 	}
-	
 
 	protected void showConsole() {
 		scrollPaneCMD.setEnabled(true);
@@ -144,11 +216,12 @@ public class TicTacToe extends JFrame {
 	}
 
 	protected void checkConsoleEnabled() {
-		if(chkbxConsoleEnabled.isSelected())
+		if (chkbxConsoleEnabled.isSelected())
 			showConsole();
-		else hideConsole();
+		else
+			hideConsole();
 	}
-	
+
 	protected void onTurn(JButton jbclicked, Player player) {
 		String playername = null;
 		switch (player) {
@@ -289,7 +362,7 @@ public class TicTacToe extends JFrame {
 		consolePanel.setText("\tWillkommen");
 
 		scrollPaneCMD.setViewportView(consolePanel);
-		
+
 		checkConsoleEnabled();
 	}
 }
