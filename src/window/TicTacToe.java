@@ -15,6 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
+import java.awt.Color;
+import javax.swing.border.BevelBorder;
 
 public class TicTacToe extends JFrame {
 	private JTextPane consolePanel = new JTextPane();
@@ -58,6 +60,12 @@ public class TicTacToe extends JFrame {
 			}
 		});
 	}
+	
+	protected void highlightWin(JButton[] buttons) {
+		for(JButton jb : buttons) {
+			jb.setBackground(Color.GREEN);
+		}
+	}
 
 	protected void end(Player player) {
 		List<JButton[]> jbl = Arrays.asList(playfield);
@@ -100,8 +108,20 @@ public class TicTacToe extends JFrame {
 						txtVal[i] = getJButtonByCoordinates(cross[i]).getText();
 					}
 					if(txtVal[0]==txtVal[2] && txtVal[2]==txtVal[4]) {
+						JButton[] buttons = new JButton[] {
+								getJButtonByCoordinates(0,0),
+								getJButtonByCoordinates(1,1),
+								getJButtonByCoordinates(2,2)
+						};
+						highlightWin(buttons);
 						return true;
-					} else if(txtVal[1]==txtVal[2] && txtVal[2]==txtVal[4]) {
+					} else if(txtVal[1]==txtVal[2] && txtVal[2]==txtVal[3]) {
+						JButton[] buttons = new JButton[] {
+								getJButtonByCoordinates(2,0),
+								getJButtonByCoordinates(1,1),
+								getJButtonByCoordinates(0,2)
+						};
+						highlightWin(buttons);
 						return true;
 					}
 				}
@@ -113,6 +133,7 @@ public class TicTacToe extends JFrame {
 	protected boolean checkHorizontal(JButton jbclicked) {
 		JButton[] row = Arrays.asList(playfield).get(getJButtonArrangement(jbclicked)[1]);
 		if (row[0].getText().equals(row[1].getText()) && row[2].getText().equals(row[1].getText())) {
+			highlightWin(row);
 			return true;
 		} else
 			return false;
@@ -122,10 +143,14 @@ public class TicTacToe extends JFrame {
 		int column = getJButtonArrangement(jbclicked)[0];
 		List<JButton[]> rows = Arrays.asList(playfield);
 		if (rows.get(0)[column].getText().equals(rows.get(1)[column].getText()) && rows.get(2)[column].getText().equals(rows.get(1)[column].getText())) {
-			System.out.println("vertical!");
+			JButton[] buttons = new JButton[] {
+					getJButtonByCoordinates(column,0),
+					getJButtonByCoordinates(column,1),
+					getJButtonByCoordinates(column,2)
+			};
+			highlightWin(buttons);
 			return true;
 		} else
-			System.out.println("oh no");
 			return false;
 	}
 
@@ -142,8 +167,8 @@ public class TicTacToe extends JFrame {
 			default:
 				System.out.println("You're stupid!");
 				break;
-			}
-		}
+			} 
+		}else consolePanel.setText(consolePanel.getText()+"\n\nEin Unentschieden!");
 	}
 
 	protected List<JButton> getEnabledJButtons() {
@@ -169,9 +194,11 @@ public class TicTacToe extends JFrame {
 	protected JButton getJButtonByCoordinates(int[] cell) {
 		List<JButton[]> jbl = Arrays.asList(playfield);
 		List<JButton> jbil = Arrays.asList(jbl.get(cell[1]));
-		System.out.println(
-				"JButton at X:" + cell[0] + ", Y:" + cell[1] + " is enabled? -> " + jbil.get(cell[0]).isEnabled());
 		return jbil.get(cell[0]);
+	}
+	
+	protected JButton getJButtonByCoordinates(int x, int y) {
+		return getJButtonByCoordinates(new int[] {x,y});
 	}
 
 	protected int[] getJButtonArrangement(JButton jb) {
@@ -245,7 +272,8 @@ public class TicTacToe extends JFrame {
 	protected void reset() {
 		for (JButton[] row : playfield) {
 			for (JButton jb : row) {
-				consolePanel.setText("\tNeu gestartet");
+				consolePanel.setText("Neu gestartet");
+				jb.setBackground(Color.DARK_GRAY);
 				jb.setEnabled(true);
 				jb.setText("");
 				jb.repaint();
@@ -258,14 +286,18 @@ public class TicTacToe extends JFrame {
 	 * Create the frame.
 	 */
 	public TicTacToe() {
+		setBackground(Color.DARK_GRAY);
 		setTitle("TicTacToe");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 200, 400);
 		contentPane = new JPanel();
+		contentPane.setBackground(Color.DARK_GRAY);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+		btn00.setForeground(Color.WHITE);
+		btn00.setBackground(Color.DARK_GRAY);
 
 		btn00.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -274,6 +306,8 @@ public class TicTacToe extends JFrame {
 		});
 		btn00.setBounds(10, 11, 50, 50);
 		contentPane.add(btn00);
+		btn10.setForeground(Color.WHITE);
+		btn10.setBackground(Color.DARK_GRAY);
 
 		btn10.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -282,6 +316,8 @@ public class TicTacToe extends JFrame {
 		});
 		btn10.setBounds(70, 11, 50, 50);
 		contentPane.add(btn10);
+		btn20.setForeground(Color.WHITE);
+		btn20.setBackground(Color.DARK_GRAY);
 
 		btn20.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -290,6 +326,8 @@ public class TicTacToe extends JFrame {
 		});
 		btn20.setBounds(130, 11, 50, 50);
 		contentPane.add(btn20);
+		btn01.setForeground(Color.WHITE);
+		btn01.setBackground(Color.DARK_GRAY);
 
 		btn01.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -298,6 +336,8 @@ public class TicTacToe extends JFrame {
 		});
 		btn01.setBounds(10, 72, 50, 50);
 		contentPane.add(btn01);
+		btn11.setForeground(Color.WHITE);
+		btn11.setBackground(Color.DARK_GRAY);
 
 		btn11.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -307,6 +347,8 @@ public class TicTacToe extends JFrame {
 		});
 		btn11.setBounds(70, 72, 50, 50);
 		contentPane.add(btn11);
+		btn21.setForeground(Color.WHITE);
+		btn21.setBackground(Color.DARK_GRAY);
 
 		btn21.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -315,6 +357,8 @@ public class TicTacToe extends JFrame {
 		});
 		btn21.setBounds(130, 72, 50, 50);
 		contentPane.add(btn21);
+		btn02.setForeground(Color.WHITE);
+		btn02.setBackground(Color.DARK_GRAY);
 
 		btn02.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -323,6 +367,8 @@ public class TicTacToe extends JFrame {
 		});
 		btn02.setBounds(10, 133, 50, 50);
 		contentPane.add(btn02);
+		btn12.setForeground(Color.WHITE);
+		btn12.setBackground(Color.DARK_GRAY);
 
 		btn12.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -331,6 +377,8 @@ public class TicTacToe extends JFrame {
 		});
 		btn12.setBounds(70, 133, 50, 50);
 		contentPane.add(btn12);
+		btn22.setForeground(Color.WHITE);
+		btn22.setBackground(Color.DARK_GRAY);
 
 		btn22.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -339,6 +387,8 @@ public class TicTacToe extends JFrame {
 		});
 		btn22.setBounds(130, 133, 50, 50);
 		contentPane.add(btn22);
+		btnRestart.setForeground(Color.WHITE);
+		btnRestart.setBackground(Color.GRAY);
 
 		btnRestart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -347,6 +397,8 @@ public class TicTacToe extends JFrame {
 		});
 		btnRestart.setBounds(10, 194, 170, 23);
 		contentPane.add(btnRestart);
+		chkbxConsoleEnabled.setForeground(Color.WHITE);
+		chkbxConsoleEnabled.setBackground(Color.DARK_GRAY);
 		chkbxConsoleEnabled.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				checkConsoleEnabled();
@@ -356,10 +408,15 @@ public class TicTacToe extends JFrame {
 		chkbxConsoleEnabled.setSelected(false);
 		chkbxConsoleEnabled.setBounds(10, 224, 170, 23);
 		contentPane.add(chkbxConsoleEnabled);
+		scrollPaneCMD.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 
 		scrollPaneCMD.setBounds(10, 259, 174, 101);
 		contentPane.add(scrollPaneCMD);
-		consolePanel.setText("\tWillkommen");
+		consolePanel.setBorder(null);
+		consolePanel.setEditable(false);
+		consolePanel.setForeground(Color.WHITE);
+		consolePanel.setBackground(Color.GRAY);
+		consolePanel.setText("Willkommen");
 
 		scrollPaneCMD.setViewportView(consolePanel);
 
